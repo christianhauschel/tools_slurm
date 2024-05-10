@@ -162,3 +162,5 @@ cython_debug/
 *.out
 test/*.out
 test/test.sh
+
+.vscode

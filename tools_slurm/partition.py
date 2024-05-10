@@ -18,9 +18,9 @@ class Partition(object):
         )
         out = output.stdout.split("/")
 
-        n_cpus_alloc = out[0]
-        n_cpus_idle = out[1]
-        n_cpus_other = out[2]
+        n_cpus_alloc = int(out[0])
+        n_cpus_idle = int(out[1])
+        n_cpus_other = int(out[2])
 
         return n_cpus_alloc, n_cpus_idle, n_cpus_other
 

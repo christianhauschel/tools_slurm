@@ -5,12 +5,14 @@ from tools_slurm import Job, Node, Partition, Cluster
 
 # Job
 section("Job")
-job = Job("91085")
+job = Job("80000")
 print("ID: ", job.id)
 print("Name: ", job.name)
 print("Status: ", job.status)
 print("Finished? ", job.is_completed)
-print("Memory: ", job.memory)
+print("Alloc. Memory: ", job.allocated_memory)
+print("Alloc. CPUs: ", job.allocated_cpus)
+print("Alloc. Nodes: ", job.allocated_nodes)
 print("Partition: ", job.partition)
 print("Nodes: ", job.nodes)
 

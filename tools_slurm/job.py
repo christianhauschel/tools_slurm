@@ -3,6 +3,8 @@
 from subprocess import run
 import numpy as np
 import re
+from quantiphy import Quantity
+
 
 class Job(object):
 
@@ -66,31 +68,16 @@ class Job(object):
         return not res
 
     @property
-    def memory(self, units="MB"):
-        output = run(
-            f"sacct -j {self.id} --format=MaxRSS",
-            shell=True,
-            text=True,
-            capture_output=True,
-        )
-        output = output.stdout.split("\n")[-2].strip()
-        try:
-            output = int(output)
-        except ValueError:
-            output = np.NaN
+    def allocated_memory(self):
+        return self._alloc_resources()[1]
 
-        if units == "MB":
-            return output / 1e6
-        elif units == "GB":
-            return output / 1e9
-        elif units == "KB":
-            return output / 1e3
-        elif units == "B":
-            return output
-        elif units == "TB":
-            return output / 1e12
-        else:
-            raise ValueError("Units must be one of 'MB', 'GB', 'KB', 'B', 'TB'")
+    @property
+    def allocated_cpus(self):
+        return self._alloc_resources()[0]
+
+    @property
+    def allocated_nodes(self):
+        return self._alloc_resources()[2]
 
     def kill(self):
         run(f"scancel {self.id}")
@@ -131,12 +118,36 @@ class Job(object):
         out = res.stdout.split()[2]
 
         # with regex find all numbers in out
-       
-
         nodes = re.findall(r"\d+", out)
         nodes = [int(node) for node in nodes]
 
         return nodes
+
+    def _alloc_resources(self):
+
+        cmd = f"sacct -j {self.id} --format='AllocTRES%100C'"
+
+        res = run(
+            cmd,
+            shell=True,
+            text=True,
+            capture_output=True,
+        )
+
+        out = res.stdout.split()[2]
+        out = out.split(",")
+
+        cpus = out[1]
+        mem = out[2]
+        n_nodes = out[3]
+
+        mem = re.findall(r"\d+", mem)[0] + mem[-1]
+        mem = Quantity(mem)
+
+        cpus = int(re.findall(r"\d+", cpus)[0])
+        n_nodes = int(re.findall(r"\d+", n_nodes)[0])
+
+        return cpus, mem, n_nodes
 
 
 # %%
