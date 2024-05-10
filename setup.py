@@ -6,6 +6,7 @@ setup(
     author='Christian Hauschel',
     description='Tools for Slurm automation',
     install_requires=[
-        "pysection @ git+https://github.com/christianhauschel/pysection"
+        # "pysection @ git+https://github.com/christianhauschel/pysection",
+        "rich",
     ],
 )

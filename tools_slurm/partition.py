@@ -1,6 +1,7 @@
 from subprocess import run
 import re
-
+from rich.table import Table 
+from rich.console import Console
 
 class Partition(object):
 
@@ -23,6 +24,19 @@ class Partition(object):
         n_cpus_other = int(out[2])
 
         return n_cpus_alloc, n_cpus_idle, n_cpus_other
+    
+    def print(self):
+        table = Table(title="Partition: " + self.name)
+        table.add_column("Property")
+        table.add_column("Value")
+        table.add_row("Nodes", str(self.nodes))
+        table.add_row("Allocated CPUs", str(self.n_cpus_alloc))
+        table.add_row("Idle CPUs", str(self.n_cpus_idle))
+        table.add_row("Other CPUs", str(self.n_cpus_other))
+
+        console = Console()
+        console.print(table)
+
 
     @property
     def n_cpus_alloc(self):
