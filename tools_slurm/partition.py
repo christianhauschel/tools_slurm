@@ -2,6 +2,8 @@ from subprocess import run
 import re
 from rich.table import Table 
 from rich.console import Console
+from quantiphy import Quantity
+from .settings import *
 
 class Partition(object):
 
@@ -33,10 +35,13 @@ class Partition(object):
         table.add_row("Allocated CPUs", str(self.n_cpus_alloc))
         table.add_row("Idle CPUs", str(self.n_cpus_idle))
         table.add_row("Other CPUs", str(self.n_cpus_other))
+        table.add_row("Memory", str(self.memory))
+        table.add_row("Allocated Memory", str(self.memory_alloc))
 
         console = Console()
         console.print(table)
 
+    @property
     def dict(self):
         return {
             "name": self.name,
@@ -44,6 +49,8 @@ class Partition(object):
             "n_cpus_alloc": self.n_cpus_alloc,
             "n_cpus_idle": self.n_cpus_idle,
             "n_cpus_other": self.n_cpus_other,
+            "memory": str(self.memory),
+            "memory_alloc": str(self.memory_alloc),
         }
 
 
@@ -74,3 +81,38 @@ class Partition(object):
         output = output.stdout.split("\n")[1:-1]
         output = [out.strip() for out in output]
         return [int(re.findall(r"\d+", o)[0]) for o in output]
+
+    @property 
+    def memory(self):
+        """Returns the total memory of the specified partition."""
+        
+        mem = 0
+        for node in self.nodes:
+            output = run(
+                f'sinfo -o "%30m" -n {PREFIX_NODE}{node} --noheader',
+                text=True,
+                capture_output=True,
+                shell=True,
+            )
+            out = output.stdout.strip()
+            mem += float(out)*1e6
+
+        return Quantity(mem, "B")
+    
+    @property
+    def memory_alloc(self):
+        """Returns the amount of allocated memory on the partition."""
+
+        
+        mem = 0
+        for node in self.nodes:
+            output = run(
+                f'sinfo -O "AllocMem" -n {PREFIX_NODE}{node} --noheader',
+                text=True,
+                capture_output=True,
+                shell=True,
+            ) 
+            out = output.stdout.strip()
+            mem += float(out)*1e6
+
+        return Quantity(mem, "B")

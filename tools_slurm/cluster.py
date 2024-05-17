@@ -1,6 +1,7 @@
 from subprocess import run
 from rich.table import Table 
 from rich.console import Console
+import re
 class Cluster(object):
     def __init__(self):
         pass 
@@ -22,6 +23,19 @@ class Cluster(object):
 
         return partitions
     
+    @property
+    def nodes(self):
+        """Returns the available nodes on the cluster."""
+        output = run(
+            f'sinfo -o "%20n"',
+            text=True,
+            capture_output=True,
+            shell=True,
+        )
+        output = output.stdout.split("\n")[1:-1]
+        output = [out.strip() for out in output]
+        nodes = [int(re.findall(r"\d+", o)[0]) for o in output]
+        return nodes
 
     def print(self):
         partitions = self.partitions
@@ -29,10 +43,14 @@ class Cluster(object):
         table.add_column("Property")
         table.add_column("Value")
         table.add_row("Partitions", ", ".join(partitions))
+        table.add_row("Nodes", str(self.nodes))
         console = Console()
         console.print(table)
 
+    @property
     def dict(self):
         return {
             "partitions": self.partitions,
+            "nodes": self.nodes,
         }
+    

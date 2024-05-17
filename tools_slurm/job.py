@@ -35,6 +35,7 @@ class Job(object):
         console = Console()
         console.print(table)
 
+    @property
     def dict(self):
         return {
             "id": self.id,
@@ -63,7 +64,12 @@ class Job(object):
             capture_output=True,
         )
 
-        return res.stdout.split()[2]
+        try:
+            name = res.stdout.split()[2]
+        except:
+            name = None
+
+        return name
 
     @property
     def status(self):
@@ -97,7 +103,11 @@ class Job(object):
             capture_output=True,
         )
 
-        return res.stdout.split()[2]
+        try:
+            user = res.stdout.split()[2]
+        except: 
+            user = None
+        return user
     
     @property 
     def elapsed_time(self):
@@ -108,9 +118,13 @@ class Job(object):
             capture_output=True,
         )
 
-        time_str= res.stdout.split()[2]
+        try:
+            time_str = res.stdout.split()[2]
+            return time_to_seconds(time_str)
+        except:
+            return 0
 
-        return time_to_seconds(time_str)
+        
     
     @property 
     def cpu_time(self):
@@ -121,9 +135,11 @@ class Job(object):
             capture_output=True,
         )
 
-        time_str= res.stdout.split()[2]
-
-        return time_to_seconds(time_str)
+        try:
+            time_str = res.stdout.split()[2]
+            return time_to_seconds(time_str)
+        except:
+            return 0
 
 
     @property
@@ -168,6 +184,7 @@ class Job(object):
             text=True,
             capture_output=True,
         )
+
         s = int(s.stdout.split()[0])
         return s
 

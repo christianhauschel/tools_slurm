@@ -23,7 +23,7 @@ def run_slurm_string(command:str, fname:str, jobname:str, wait:bool=True):
     """
     with open(fname, "w") as f:
         f.write(command)
-    run_slurm_file(fname, jobname, wait=wait)
+    return run_slurm_file(fname, jobname, wait=wait)
 
     
 
