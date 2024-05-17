@@ -32,4 +32,7 @@ class Cluster(object):
         console = Console()
         console.print(table)
 
-        
+    def dict(self):
+        return {
+            "partitions": self.partitions,
+        }

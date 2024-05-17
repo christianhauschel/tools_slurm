@@ -35,6 +35,21 @@ class Job(object):
         console = Console()
         console.print(table)
 
+    def dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "status": self.status,
+            "user": self.user,
+            "elapsed_time": seconds_to_time(self.elapsed_time),
+            "cpu_time": seconds_to_time(self.cpu_time),
+            "allocated_memory": str(self.allocated_memory),
+            "allocated_cpus": str(self.allocated_cpus),
+            "allocated_nodes": str(self.allocated_nodes),
+            "partition": self.partition,
+            "nodes": str(self.nodes),
+        }
+
     def __repr__(self):
         return f"Job {self.id} ({self.name})"
     

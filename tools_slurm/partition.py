@@ -37,6 +37,15 @@ class Partition(object):
         console = Console()
         console.print(table)
 
+    def dict(self):
+        return {
+            "name": self.name,
+            "nodes": str(self.nodes),
+            "n_cpus_alloc": self.n_cpus_alloc,
+            "n_cpus_idle": self.n_cpus_idle,
+            "n_cpus_other": self.n_cpus_other,
+        }
+
 
     @property
     def n_cpus_alloc(self):
