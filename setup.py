@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='tools_slurm',
-    version='0.1.5',
+    version='0.1.6',
     author='Christian Hauschel',
     description='Tools for Slurm automation',
     install_requires=[

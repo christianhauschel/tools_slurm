@@ -24,18 +24,21 @@ partition.print()
 node = Node(partition.nodes[0])
 node.print()
 
+# %%
+
 # Optimal Single-Node Job
-partition, n_cpus, memory = optimal_job_singlenode(
+partition, node, n_cpus, memory = optimal_job_singlenode(
     partitions_included=["bravo", "charlie"],
-    mem_min=Quantity("50", "GB"),
-    mem_max=Quantity("100", "GB"),
+    mem_min=Quantity("40GB"),
+    mem_max=Quantity("100GB"),
     n_cpu_min=10,
     n_cpu_max=40,
 )
 print("Optimal Single-Node Job Settings")
-print(" Partition: ", partition)
-print(" #CPUs:     ", n_cpus)
-print(" Memory:    ", memory)
+print("\tPartition: ", partition)
+print("\tNode:      ", node)
+print("\t#CPUs:     ", n_cpus)
+print("\tMemory:    ", memory)
 
 
 # %%
