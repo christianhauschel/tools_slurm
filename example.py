@@ -5,7 +5,7 @@ from tools_slurm import Job, Node, Partition, Cluster, seconds_to_time, optimal_
 from quantiphy import Quantity
 
 # Job
-job = Job("96121") # finished job
+job = Job.from_name("obj") # finished job
 # job = Job("91293") # cancelled job
 job.print()
 # job.kill()
@@ -27,7 +27,7 @@ node.print()
 # %%
 
 # Optimal Single-Node Job
-partition, node, n_cpus, memory = optimal_job_singlenode(
+partition, n_cpus, memory = optimal_job_singlenode(
     partitions_included=["bravo", "charlie"],
     mem_min=Quantity("40GB"),
     mem_max=Quantity("100GB"),
@@ -36,7 +36,6 @@ partition, node, n_cpus, memory = optimal_job_singlenode(
 )
 print("Optimal Single-Node Job Settings")
 print("\tPartition: ", partition)
-print("\tNode:      ", node)
 print("\t#CPUs:     ", n_cpus)
 print("\tMemory:    ", memory)
 

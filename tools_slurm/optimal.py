@@ -34,11 +34,11 @@ def optimal_job_singlenode(
             nodes_n_cpus_max.append(node.n_cpus_idle)
             nodes_mem_max.append(mem_free)
 
-    # Figure out best node to run job, maximizing n_cpus
+    if len(nodes_n_cpus_max) == 0:
+        return None, None, None
+    
     id_node = argmax(nodes_n_cpus_max)
 
-    if id_node is None:
-        return None, None, None
 
     node = Node(nodes_allowed[id_node])
 
@@ -47,7 +47,7 @@ def optimal_job_singlenode(
     n_cpu =  max(n_cpu_min, min(n_cpu_max, node.n_cpus_idle))
     mem = max(mem_min, min(mem_max, Quantity(node.memory - node.memory_alloc, "B")))    
 
-    return node.partition, node.name, n_cpu, mem
+    return node.partition, n_cpu, mem
 
 # partition, n_cpus, memory = optimal_job_singlenode()
 
