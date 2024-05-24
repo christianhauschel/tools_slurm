@@ -1,9 +1,10 @@
 from subprocess import run
 import re
-from rich.table import Table 
+from rich.table import Table
 from rich.console import Console
 from quantiphy import Quantity
 from .settings import *
+
 
 class Partition(object):
 
@@ -19,14 +20,20 @@ class Partition(object):
             capture_output=True,
             shell=True,
         )
-        out = output.stdout.split("/")
 
-        n_cpus_alloc = int(out[0])
-        n_cpus_idle = int(out[1])
-        n_cpus_other = int(out[2])
+        try:
 
-        return n_cpus_alloc, n_cpus_idle, n_cpus_other
-    
+            out = output.stdout.split("/")
+
+            n_cpus_alloc = int(out[0])
+            n_cpus_idle = int(out[1])
+            n_cpus_other = int(out[2])
+
+            return n_cpus_alloc, n_cpus_idle, n_cpus_other
+        except Exception as e:
+            print(e)
+            return None
+
     def print(self):
         table = Table(title="Partition: " + self.name)
         table.add_column("Property")
@@ -53,7 +60,6 @@ class Partition(object):
             "memory_alloc": str(self.memory_alloc),
         }
 
-
     @property
     def n_cpus_alloc(self):
         """Returns the number of allocated CPUs on the specified partition."""
@@ -78,14 +84,18 @@ class Partition(object):
             capture_output=True,
             shell=True,
         )
-        output = output.stdout.split("\n")[1:-1]
-        output = [out.strip() for out in output]
-        return [int(re.findall(r"\d+", o)[0]) for o in output]
+        try:
+            output = output.stdout.split("\n")[1:-1]
+            output = [out.strip() for out in output]
+            return [int(re.findall(r"\d+", o)[0]) for o in output]
+        except Exception as e:
+            print(e)
+            return None
 
-    @property 
+    @property
     def memory(self):
         """Returns the total memory of the specified partition."""
-        
+
         mem = 0
         for node in self.nodes:
             output = run(
@@ -95,15 +105,14 @@ class Partition(object):
                 shell=True,
             )
             out = output.stdout.strip()
-            mem += float(out)*1e6
+            mem += float(out) * 1e6
 
         return Quantity(mem, "B")
-    
+
     @property
     def memory_alloc(self):
         """Returns the amount of allocated memory on the partition."""
 
-        
         mem = 0
         for node in self.nodes:
             output = run(
@@ -111,8 +120,8 @@ class Partition(object):
                 text=True,
                 capture_output=True,
                 shell=True,
-            ) 
+            )
             out = output.stdout.strip()
-            mem += float(out)*1e6
+            mem += float(out) * 1e6
 
         return Quantity(mem, "B")

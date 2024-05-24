@@ -23,13 +23,18 @@ class Node(object):
             capture_output=True,
             shell=True,
         )
-        out = output.stdout.split("/")
 
-        n_cpus_alloc = out[0]
-        n_cpus_idle = out[1]
-        n_cpus_other = out[2]
+        try:
+            out = output.stdout.split("/")
 
-        return int(n_cpus_alloc), int(n_cpus_idle), int(n_cpus_other)
+            n_cpus_alloc = out[0]
+            n_cpus_idle = out[1]
+            n_cpus_other = out[2]
+
+            return int(n_cpus_alloc), int(n_cpus_idle), int(n_cpus_other)
+        except Exception as e:
+            print(e)
+            return None
     
     def print(self):
         table = Table(title="Node: " + self.name)
@@ -87,7 +92,11 @@ class Node(object):
             capture_output=True,
             shell=True,
         )
-        return Quantity(float(output.stdout.strip())*1e6, "B")
+        try:
+            return Quantity(float(output.stdout.strip())*1e6, "B")
+        except Exception as e:
+            print(e)
+            return None
     
     @property 
     def memory_alloc(self):
@@ -98,7 +107,11 @@ class Node(object):
             capture_output=True,
             shell=True,
         )
-        return Quantity(float(output.stdout.strip())*1e6, "B")
+        try:
+            return Quantity(float(output.stdout.strip())*1e6, "B")
+        except Exception as e:
+            print(e)
+            return None
     
 
     @property 

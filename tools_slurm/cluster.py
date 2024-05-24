@@ -15,13 +15,14 @@ class Cluster(object):
             capture_output=True,
             shell=True,
         )
-
-        partitions = output.stdout.split()
-
-        # remove "*" from partitions if present
-        partitions = [p.replace("*", "") for p in partitions]
-
-        return partitions
+        try:
+            partitions = output.stdout.split()
+            # remove "*" from partitions if present
+            partitions = [p.replace("*", "") for p in partitions]
+            return partitions
+        except Exception as e:
+            print(e)
+            return None
     
     @property
     def nodes(self):
@@ -32,10 +33,14 @@ class Cluster(object):
             capture_output=True,
             shell=True,
         )
-        output = output.stdout.split("\n")[1:-1]
-        output = [out.strip() for out in output]
-        nodes = [int(re.findall(r"\d+", o)[0]) for o in output]
-        return nodes
+        try:
+            output = output.stdout.split("\n")[1:-1]
+            output = [out.strip() for out in output]
+            nodes = [int(re.findall(r"\d+", o)[0]) for o in output]
+            return nodes
+        except Exception as e:
+            print(e)
+            return None
 
     def print(self):
         partitions = self.partitions

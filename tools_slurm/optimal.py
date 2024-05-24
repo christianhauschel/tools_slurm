@@ -26,9 +26,9 @@ def optimal_job_singlenode(
         mem_free = Quantity(node.memory - node.memory_alloc, "B")
 
         if (
-            node.n_cpus_idle > n_cpu_min
+            node.n_cpus_idle >= n_cpu_min
             and node.partition in partitions_included
-            and mem_free > mem_min
+            and mem_free >= mem_min
         ):
             nodes_allowed.append(n)
             nodes_n_cpus_max.append(node.n_cpus_idle)
@@ -48,9 +48,3 @@ def optimal_job_singlenode(
     mem = max(mem_min, min(mem_max, Quantity(node.memory - node.memory_alloc, "B")))    
 
     return node.partition, n_cpu, mem
-
-# partition, n_cpus, memory = optimal_job_singlenode()
-
-# print("Partition: ", partition)
-# print("#CPUs:     ", n_cpus)
-# print("Memory:    ", memory)

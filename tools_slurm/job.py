@@ -52,7 +52,7 @@ class Job(object):
         }
 
     def __repr__(self):
-        return f"Job {self.id} ({self.name})"
+        return f"Job {self.id} ({self.name}), run by {self.user}, status: {self.status}"
     
         
     @property
@@ -66,7 +66,8 @@ class Job(object):
 
         try:
             name = res.stdout.split()[2]
-        except:
+        except Exception as e:
+            print(e)
             name = None
 
         return name
@@ -105,7 +106,8 @@ class Job(object):
 
         try:
             user = res.stdout.split()[2]
-        except: 
+        except Exception as e: 
+            print(e)
             user = None
         return user
     
@@ -121,7 +123,8 @@ class Job(object):
         try:
             time_str = res.stdout.split()[2]
             return time_to_seconds(time_str)
-        except:
+        except Exception as e:
+            print(e)
             return 0
 
         
@@ -138,7 +141,8 @@ class Job(object):
         try:
             time_str = res.stdout.split()[2]
             return time_to_seconds(time_str)
-        except:
+        except Exception as e:
+            print(e)
             return 0
 
 
@@ -153,6 +157,7 @@ class Job(object):
             )
             res = res.stdout.split()
         except Exception as e:
+            print(e)
             res = ""
         return not res
 
@@ -185,8 +190,12 @@ class Job(object):
             capture_output=True,
         )
 
-        s = int(s.stdout.split()[0])
-        return s
+        try:
+            s = int(s.stdout.split()[0])
+            return s
+        except Exception as e:
+            print(e)
+            return None
 
     @property
     def partition(self):
@@ -197,7 +206,11 @@ class Job(object):
             capture_output=True,
         )
 
-        return res.stdout.split()[2]
+        try:
+            return res.stdout.split()[2]
+        except Exception as e:
+            print(e)
+            return None
 
     @property
     def nodes(self):
@@ -207,13 +220,18 @@ class Job(object):
             text=True,
             capture_output=True,
         )
-        out = res.stdout.split()[2]
 
-        # with regex find all numbers in out
-        nodes = re.findall(r"\d+", out)
-        nodes = [int(node) for node in nodes]
+        try:
+            out = res.stdout.split()[2]
 
-        return nodes
+            # with regex find all numbers in out
+            nodes = re.findall(r"\d+", out)
+            nodes = [int(node) for node in nodes]
+
+            return nodes
+        except Exception as e:
+            print(e)
+            return None
 
     def _alloc_resources(self):
 
@@ -226,20 +244,22 @@ class Job(object):
             capture_output=True,
         )
 
-        out = res.stdout.split()[2]
-        out = out.split(",")
+        try:
+            out = res.stdout.split()[2]
+            out = out.split(",")
 
-        cpus = out[1]
-        mem = out[2]
-        n_nodes = out[3]
+            cpus = out[1]
+            mem = out[2]
+            n_nodes = out[3]
 
-        mem = re.findall(r"\d+", mem)[0] + mem[-1]
-        mem = Quantity(mem)
+            mem = re.findall(r"\d+", mem)[0] + mem[-1]
+            mem = Quantity(mem)
 
-        cpus = int(re.findall(r"\d+", cpus)[0])
-        n_nodes = int(re.findall(r"\d+", n_nodes)[0])
+            cpus = int(re.findall(r"\d+", cpus)[0])
+            n_nodes = int(re.findall(r"\d+", n_nodes)[0])
 
-        return cpus, mem, n_nodes
-
-
-# %%
+            return cpus, mem, n_nodes
+        
+        except Exception as e:
+            print(e)
+            return None
